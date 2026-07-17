@@ -1,0 +1,1 @@
+Seeking a Machine Learning Engineer with strong Python skills and experience in NLP, deep learning, and PyTorch or TensorFlow. Candidate should understand data preprocessing, model training, and deployment. Experience with Git and version control is expected. Leadership and communication skills preferred.
