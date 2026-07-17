@@ -43,35 +43,8 @@ def extract_name(text):
     return "Not Found"
 
 
-# ================= UI SETUP - CORPORATE MODERN THEME =================
+# ================= UI SETUP =================
 st.set_page_config(layout="wide", page_title="TalentScreener AI", page_icon=None)
-
-# CSS
-st.markdown("""
-    <style>
-    .main-title { font-size: 32px; font-weight: 700; color: var(--text-color); text-align: left; margin-bottom: 5px; font-family: 'Inter', sans-serif; }
-    .sub-title { font-size: 14px; text-align: left; color: var(--text-color); opacity: 0.8; margin-bottom: 30px; font-family: 'Inter', sans-serif; }
-    div.stButton > button:first-child { background-color: #2563EB; color: white; border-radius: 6px; border: none; font-weight: 600; padding: 10px 24px; }
-    div.stButton > button:first-child:hover { background-color: #1D4ED8; color: white; }
-    .doc-section { background-color: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #2563EB; }
-    section[data-testid="stSidebar"] {
-        background-color: #0F172A;
-        border-right: 1px solid #1E293B;
-    }
-    section[data-testid="stSidebar"] .stRadio > label {
-        font-size: 15px;
-    }
-    section[data-testid="stSidebar"] div[role="radiogroup"] label {
-        padding: 10px 14px;
-        border-radius: 8px;
-        margin-bottom: 4px;
-        transition: background-color 0.2s;
-    }
-    section[data-testid="stSidebar"] div[role="radiogroup"] label:hover {
-        background-color: rgba(37,99,235,0.1);
-    }
-    </style>
-""", unsafe_allow_html=True)
 
 # --- SIDEBAR NAVIGATION ---
 st.sidebar.title("TalentScreener AI")
@@ -95,30 +68,17 @@ app_mode = st.sidebar.radio(
 # ================= PAGE 1: EVALUATION CONSOLE =================
 if app_mode == "Evaluation Console":
 
-    st.markdown('<div class="main-title">TalentScreener AI</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">AI Powered Resume Screening Platform</div>', unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div style="display:flex; justify-content:space-between; align-items:center;
-        background-color: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.3);
-        border-radius: 8px; padding: 14px 24px; margin-bottom: 24px; font-size: 14px;">
-            <span>Upload Resumes</span>
-            <span style="opacity:0.4;">&mdash;</span>
-            <span>AI Analysis</span>
-            <span style="opacity:0.4;">&mdash;</span>
-            <span>Candidate Ranking</span>
-            <span style="opacity:0.4;">&mdash;</span>
-            <span>ATS Evaluation</span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.title("TalentScreener AI")
+    st.caption("AI Powered Resume Screening Platform")
+    st.write("Upload Resumes  →  AI Analysis  →  Candidate Ranking  →  ATS Evaluation")
+
+    st.markdown("---")
 
     # Clean Layout Columns
     col_input1, col_input2 = st.columns([1, 1], gap="large")
 
     with col_input1:
-        st.markdown("### Upload Candidate Resumes")
+        st.subheader("Upload Candidate Resumes")
         uploaded_files = st.file_uploader(
             "Upload candidate profiles (PDF format supported)",
             type=["pdf"], accept_multiple_files=True, label_visibility="collapsed"
@@ -126,18 +86,16 @@ if app_mode == "Evaluation Console":
         st.caption("Only PDF files are accepted. Other formats (DOCX, JPG, TXT, etc.) will not be uploaded.")
 
     with col_input2:
-        st.markdown("### Job Description")
+        st.subheader("Job Description")
         job_description = st.text_area(
             "Paste Job Description", height=125,
             placeholder="Enter target skills, qualifications, and role responsibilities...",
             label_visibility="collapsed"
         )
 
-    st.markdown("<br>", unsafe_allow_html=True)
-
     analyze = st.button("Analyze Candidates", use_container_width=True)
 
-    # --- RUN ANALYSIS WHEN BUTTON IS CLICKED ---
+    # --- RUN ANALYSIS   WHEN BUTTON IS CLICKED ---
     if analyze:
         if not job_description and not uploaded_files:
             st.session_state['analysis_done'] = False
@@ -220,39 +178,31 @@ if app_mode == "Evaluation Console":
                 st.session_state['analysis_done'] = False
                 st.error("No resumes could be processed. The uploaded file(s) may be corrupted, blank, or not a valid PDF. Please check the file and try again.")
 
-    # --- DISPLAY RESULTS (persists across reruns, e.g. selecting a candidate) ---
+    # --- DISPLAY RESULTS   (persists across reruns, e.g. selecting a candidate) ---
     if st.session_state.get('analysis_done'):
         df = st.session_state['df']
         best_candidate = df.iloc[0]
 
         # --- METRICS PANEL ---
         st.markdown("---")
-        st.markdown("## Executive Dashboard")
+        st.header("Executive Dashboard")
 
-        st.markdown(
-            f"""
-           <div style="background: linear-gradient(135deg, rgba(234,179,8,0.15), rgba(234,179,8,0.03));
-           border: 1px solid #EAB308; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px;">
-            <div style="color:#EAB308; font-weight:700; font-size:14px; letter-spacing:1px; margin-bottom:12px;">TOP CANDIDATE</div>
-            <div style="font-size:24px; font-weight:700; color:white; margin-bottom:8px;">{best_candidate['Candidate Name']}</div>
-            <div style="opacity:0.85; font-size:14px; color:white;">
-                Match Score: <b>{best_candidate['Combined Score (%)']}%</b> &nbsp;&nbsp;|&nbsp;&nbsp;
-                Recommendation: <b>{best_candidate['Recommendation']}</b>
-            </div>
-        </div>
-        """,
-            unsafe_allow_html=True
-        )
-
-        # Consistent with the "Hire" threshold used above, so a candidate
-        # marked "Hire" is also counted as a Recommended Profile.
+        st.subheader("Top Candidate")
+        t1, t2, t3 = st.columns(3)
+        with t1:
+            st.write(f"**Name:** {best_candidate['Candidate Name']}")
+        with t2:
+            st.metric("Match Score", f"{best_candidate['Combined Score (%)']}%")
+        with t3:
+            st.write(f"**Recommendation:** {best_candidate['Recommendation']}")
+.
         recommended = len(df[df["Combined Score (%)"] >= 55])
         strong_hire = len(df[df["Recommendation"] == "Strong Hire"])
         hire = len(df[df["Recommendation"] == "Hire"])
         consider = len(df[df["Recommendation"] == "Consider"])
         not_suitable = len(df[df["Recommendation"] == "Not Suitable"])
 
-        st.markdown("### Recommendation Summary")
+        st.subheader("Recommendation Summary")
 
         if len(df) > 0:
             success_rate = round((recommended / len(df)) * 100, 2)
@@ -260,7 +210,6 @@ if app_mode == "Evaluation Console":
             success_rate = 0
 
         st.progress(success_rate / 100)
-
         st.caption(f"Overall Selection Success Rate : {success_rate}%")
 
         r1, r2, r3, r4 = st.columns(4)
@@ -304,25 +253,24 @@ if app_mode == "Evaluation Console":
 
         # --- LEFT COLUMN ---
         with col_res1:
-            st.markdown("## Candidate Ranking")
+            st.header("Candidate Ranking")
             st.caption("AI-powered ranking of candidate profiles based on job description similarity.")
 
             for idx, row in df.iterrows():
                 with st.container(border=True):
                     left_col, right_col = st.columns([4, 1])
                     with left_col:
-                        st.markdown(f"### #{idx + 1}  {row['Candidate Name']}")
+                        st.subheader(f"#{idx + 1}  {row['Candidate Name']}")
                         st.write(f"**Email:** {row['Email']}")
                         st.write(f"**Phone:** {row['Phone']}")
 
                         st.write("**Matched Skills**")
-
                         if row["Matched_Skills"]:
                             st.success(" | ".join(row["Matched_Skills"]))
                         else:
                             st.info("No matching skills found")
-                        st.write("**Missing Skills**")
 
+                        st.write("**Missing Skills**")
                         if row["Missing_Skills"]:
                             st.error(" | ".join(row["Missing_Skills"]))
                         else:
@@ -342,7 +290,7 @@ if app_mode == "Evaluation Console":
                         st.divider()
 
             # Export Button Data Preparation
-            st.markdown("### Export Evaluation Data")
+            st.subheader("Export Evaluation Data")
 
             df_export = df.copy()
             if 'Matched_Skills' in df_export.columns:
@@ -350,11 +298,10 @@ if app_mode == "Evaluation Console":
             if 'Missing_Skills' in df_export.columns:
                 df_export['Missing Skills'] = df_export['Missing_Skills'].apply(lambda x: ", ".join(x))
 
-            # Force Phone to be read as text in Excel, so it doesn't get
-            # auto-converted to scientific notation (e.g. 9.13E+09).
+            
             if 'Phone' in df_export.columns:
                 df_export['Phone'] = df_export['Phone'].apply(
-                   lambda x: f'="{x}"' if x and x != "Not Found" else x 
+                    lambda x: f'="{x}"' if x and x != "Not Found" else x
                 )
 
             cols_to_drop = [c for c in ["Matched_Skills", "Missing_Skills"] if c in df_export.columns]
@@ -370,32 +317,28 @@ if app_mode == "Evaluation Console":
                 use_container_width=True
             )
 
-        # --- RIGHT COLUMN: DYNAMIC CIRCULAR GAUGE & VARIANCE ANALYTICS ---
+        # --- RIGHT COLUMN: SKILL ANALYSIS ---
         with col_res2:
             st.markdown("---")
-            st.markdown("## Skill Analysis")
+            st.header("Skill Analysis")
 
             k1, k2 = st.columns(2)
-
             with k1:
                 st.metric("Matched Skills", total_matched)
-
             with k2:
                 st.metric("Missing Skills", total_missing)
 
             st.progress(coverage)
+
             fig = go.Figure(data=[go.Pie(
                 labels=["Matched Skills", "Missing Skills"],
                 values=[total_matched, total_missing],
                 hole=0.6,
-                marker_colors=["#22C55E", "#EF4444"]
             )])
             fig.update_layout(
                 showlegend=True,
                 margin=dict(t=0, b=0, l=0, r=0),
                 height=220,
-                paper_bgcolor="rgba(0,0,0,0)",
-                font=dict(color="white")
             )
             st.plotly_chart(fig, use_container_width=True)
             st.caption(f"Overall Skill Coverage : {round(coverage * 100, 2)}%")
@@ -416,12 +359,10 @@ if app_mode == "Evaluation Console":
 
         st.markdown("---")
 
-        st.markdown("## Candidate Evaluation")
+        st.header("Candidate Evaluation")
         st.caption("Interactive analysis of shortlisted candidates.")
 
-        # Dropdown for selecting a candidate to view their circular gauge
-        # Use row position (not name) to identify a candidate, so two
-        # candidates sharing the same name are still distinguished correctly.
+       
         candidate_labels = [
             f"{row['Candidate Name']} (#{idx + 1})" for idx, row in df.iterrows()
         ]
@@ -432,98 +373,63 @@ if app_mode == "Evaluation Console":
             cand_row = df.iloc[selected_idx]
             score = int(round(float(cand_row["Combined Score (%)"])))
 
-            # SVG Gauge Math (Radius = 52, Circumference = ~326.7)
-            dash_offset = 326.7 - (326.7 * score / 100)
-
             with st.container(border=True):
-                st.markdown(
-                    "<h3 style='margin-bottom:2px;'>Candidate Profile</h3><hr style='margin-top:0; opacity:0.15;'>",
-                    unsafe_allow_html=True
-                )
+                st.subheader("Candidate Profile")
 
-                st.markdown("##### Hiring Decision")
+                st.write("**Hiring Decision**")
+                if cand_row["Recommendation"] == "Strong Hire":
+                    st.success(cand_row["Recommendation"])
+                elif cand_row["Recommendation"] == "Hire":
+                    st.info(cand_row["Recommendation"])
+                elif cand_row["Recommendation"] == "Consider":
+                    st.warning(cand_row["Recommendation"])
+                else:
+                    st.error(cand_row["Recommendation"])
 
-                badge_colors = {
-                    "Strong Hire": ("rgba(34,197,94,0.15)", "#22C55E"),
-                    "Hire": ("rgba(59,130,246,0.15)", "#3B82F6"),
-                    "Consider": ("rgba(234,179,8,0.15)", "#EAB308"),
-                    "Not Suitable": ("rgba(239,68,68,0.15)", "#F87171"),
-                }
-                bg, border = badge_colors.get(cand_row["Recommendation"], ("#334155", "#94A3B8"))
-
-                st.markdown(
-                    f"""<div style="display:inline-block; background-color:{bg}; border:1px solid {border};
-                    color:white; padding:6px 18px; border-radius:20px; font-weight:600; font-size:14px;">
-                    {cand_row["Recommendation"]}
-                    </div>""",
-                    unsafe_allow_html=True
-                )
-
-                # Circular SVG Progress Gauge Layout
-                gauge_html = f"""
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1E293B; padding: 25px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 20px;">
-                <svg width="140" height="140" viewBox="0 0 120 120">
-                    <circle cx="60" cy="60" r="52" fill="transparent" stroke="#334155" stroke-width="10"/>
-                    <circle cx="60" cy="60" r="52" fill="transparent" stroke="#2563EB" stroke-width="10"
-                            stroke-dasharray="326.7" stroke-dashoffset="{dash_offset}"
-                            stroke-linecap="round" transform="rotate(-90 60 60)"/>
-                    <text x="60" y="66" fill="#FFFFFF" font-size="22" font-weight="700" text-anchor="middle">{score}%</text>
-                </svg>
-                <div style="color: #94A3B8; font-size: 13px; margin-top: 12px; font-weight: 600; letter-spacing: 0.5px;">TOTAL RESUME FITMENT STRENGTH</div>
-                </div>
-                """
-                st.components.v1.html(gauge_html, height=210)
-
-            st.markdown("<br>", unsafe_allow_html=True)
+                st.metric("Total Resume Fitment Strength", f"{score}%")
+                st.progress(score / 100)
 
             with st.container(border=True):
                 p1, p2 = st.columns(2)
 
                 with p1:
-                    st.markdown("#### Personal Information")
+                    st.subheader("Personal Information")
                     st.write(f"**Name:** {cand_row['Candidate Name']}")
                     st.write(f"**Email:** {cand_row['Email']}")
                     st.write(f"**Phone:** {cand_row['Phone']}")
 
                 with p2:
-                    st.markdown("#### Evaluation Metrics")
+                    st.subheader("Evaluation Metrics")
                     st.metric("Match Score", f"{cand_row['Combined Score (%)']}%")
                     st.metric("ATS Score", f"{cand_row['ATS Score']}%")
-
-            st.markdown("<br>", unsafe_allow_html=True)
 
             found_sections, missing_sections = analyze_resume_strength(cand_row["Resume_Text"])
             strength_score = int((len(found_sections) / 5) * 100)
 
             with st.container(border=True):
-                st.markdown("#### Resume Analysis")
+                st.subheader("Resume Analysis")
 
-                bar_col, _ = st.columns([2, 1])
-                with bar_col:
-                    st.progress(strength_score / 100)
-                    m1, m2 = st.columns(2)
-
+                st.progress(strength_score / 100)
+                m1, m2 = st.columns(2)
                 with m1:
                     st.metric("Resume Strength", f"{strength_score}%")
                 with m2:
                     st.metric("ATS Score", f"{cand_row['ATS Score']}%")
 
                 left, right = st.columns(2)
-
                 with left:
-                    st.markdown("#### Detected Sections")
+                    st.write("**Detected Sections**")
                     for section in found_sections:
-                        st.write(f"• {section}")
+                        st.write(f"- {section}")
                 with right:
-                    st.markdown("#### Sections to Improve")
+                    st.write("**Sections to Improve**")
                     if missing_sections:
                         for section in missing_sections:
-                            st.write(f"• {section}")
+                            st.write(f"- {section}")
                     else:
                         st.info("No missing sections")
 
             suggestions = []
-
             if "Projects" in missing_sections:
                 suggestions.append("Add at least 2 academic or personal projects.")
             if "Experience" in missing_sections:
@@ -535,21 +441,11 @@ if app_mode == "Evaluation Console":
             if "Skills" in missing_sections:
                 suggestions.append("Create a dedicated technical skills section.")
 
-            st.markdown("<br>", unsafe_allow_html=True)
-
             with st.container(border=True):
-                st.markdown("#### Resume Improvement Suggestions")
-
+                st.subheader("Resume Improvement Suggestions")
                 if suggestions:
-                    sug_col, _ = st.columns([2, 1])
-                    with sug_col:
-                        for single_suggestion in suggestions:
-                            st.markdown(
-                                f"""<div style="background-color: rgba(37,99,235,0.1); border-left: 3px solid #2563EB; padding: 10px 14px; border-radius: 6px; margin-bottom: 8px;">
-                                {single_suggestion}
-                                </div>""",
-                                unsafe_allow_html=True
-                            )
+                    for single_suggestion in suggestions:
+                        st.info(single_suggestion)
                 else:
                     st.success("Resume looks complete. No major improvements suggested.")
 
@@ -557,21 +453,12 @@ if app_mode == "Evaluation Console":
             dist_fig = go.Figure(data=[go.Bar(
                 x=["Strong Hire", "Hire", "Consider", "Not Suitable"],
                 y=[strong_hire, hire, consider, not_suitable],
-                marker_color=["#22C55E", "#3B82F6", "#EAB308", "#EF4444"],
-                marker_line_width=0,
-                width=0.5
             )])
             dist_fig.update_layout(
                 margin=dict(t=10, b=10, l=10, r=10),
                 height=250,
-                bargap=0.4,
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(color="white"),
-                yaxis=dict(title="Candidates", gridcolor="rgba(255,255,255,0.1)"),
-                xaxis=dict(showgrid=False),
+                yaxis=dict(title="Candidates"),
             )
-            dist_fig.update_traces(marker_cornerradius=8)
             st.plotly_chart(dist_fig, use_container_width=True, config={"displayModeBar": False})
 
             with st.expander("Filter Analytics by Skill Matrix"):
@@ -590,38 +477,30 @@ if app_mode == "Evaluation Console":
                         st.warning("No candidate found with this skill.")
 
     st.markdown("---")
-    st.markdown(
-        """
-        <div style="text-align:center; padding: 10px 0; opacity: 0.75;">
-        <span style="font-weight:600;">TalentScreener AI v1.0</span> &nbsp;|&nbsp;
-        Made by Srishti Maurya &nbsp;|&nbsp;
-        Data &amp; AI Projects &nbsp;|&nbsp;
-    
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.caption("TalentScreener AI v1.0 | Made by Srishti Maurya | Data & AI Projects | Python · Streamlit · NLP")
 
 
 # ================= PAGE 2: SYSTEM DOCUMENTATION =================
 elif app_mode == "System Documentation":
-    st.markdown('<div class="main-title">Architecture &amp; System Documentation</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="sub-title">Technical specifications and compliance framework of TalentScreener AI</div>',
-        unsafe_allow_html=True
+    st.title("Architecture & System Documentation")
+    st.caption("Technical specifications and compliance framework of TalentScreener AI")
+
+    st.markdown("---")
+    st.subheader("1. Core Processing Engine")
+    st.write(
+        "The system utilizes a multi-stage Natural Language Processing (NLP) pipeline "
+        "to clean text data, remove noisy components, and structure unstructured resume "
+        "textual fields."
     )
 
-    st.markdown("""
-    <div class="doc-section">
-        <h4>1. Core Processing Engine</h4>
-        <p>The system utilizes a multi-stage Natural Language Processing (NLP) pipeline to clean text data, remove noisy components, and structure unstructured resume textual fields.</p>
-    </div>
-    <div class="doc-section">
-        <h4>2. Vectorization &amp; Similarity Metrics</h4>
-        <p>Candidate profiles are vectorized and compared against the requested Job Description using spatial proximity metrics to generate normalized statistical variance scores.</p>
-    </div>
-    <div class="doc-section">
-        <h4>3. Enterprise Security &amp; Privacy</h4>
-        <p>All uploads are parsed completely in volatile runtime memory. No persistent storage systems or external logs retain personal data records.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.subheader("2. Vectorization & Similarity Metrics")
+    st.write(
+        "Candidate profiles are vectorized (TF-IDF) and compared against the requested "
+        "Job Description using cosine similarity to generate normalized match scores."
+    )
+
+    st.subheader("3. Enterprise Security & Privacy")
+    st.write(
+        "All uploads are parsed completely in volatile runtime memory. No persistent "
+        "storage systems or external logs retain personal data records."
+    )
