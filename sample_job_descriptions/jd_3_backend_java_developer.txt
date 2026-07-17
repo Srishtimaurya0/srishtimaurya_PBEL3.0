@@ -1,0 +1,1 @@
+We are hiring a Backend Java Developer with strong expertise in Java, C++, and object-oriented programming. The candidate must have experience with deep learning frameworks like TensorFlow and computer vision using OpenCV. Familiarity with GitHub for collaborative development and strong leadership skills are required.
