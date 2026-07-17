@@ -1,0 +1,1 @@
+Looking for a Computer Vision intern with knowledge of Python, OpenCV, and deep learning frameworks like TensorFlow or PyTorch. Should be comfortable with numpy and image processing pipelines. Familiarity with Git for version control and strong teamwork skills required.
