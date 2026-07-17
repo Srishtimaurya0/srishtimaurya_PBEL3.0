@@ -1,0 +1,1 @@
+We are looking for a Data Scientist proficient in Python, pandas, numpy, and machine learning. The candidate should have hands-on experience with scikit-learn, TensorFlow, and data visualization tools like Power BI or Tableau. Strong communication and teamwork skills required. Familiarity with SQL and Git/GitHub is a plus.
